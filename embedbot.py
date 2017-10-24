@@ -53,14 +53,23 @@ async def ez(message):
         await client.delete_message(url)
     except:
         pass
+    await client.edit_message(InitMsg, "What do you want the footer text to be? If you do not want one, press X. If you do want one, type the URL.")
+    footer = await client.wait_for_message(author=message.author, timeout=60)
+    try:
+        await client.delete_message(footer)
+    except:
+        pass
     title = title.content
     desc = desc.content
     colour = colour.content.lower()
     url = url.content
+    footer = footer.content
     if title.lower() == "x":
         title = None
     if desc.lower() == "x":
         desc = None
+    if footer.lower() == "x":
+        footer = None
     if colour == "x":
         colour = None
     if url.lower() == "x":
@@ -77,10 +86,11 @@ async def ez(message):
         clr = 0xFFA500
     else:
         clr = 0x000000
-    if url == None:
-        e = discord.Embed(title=title, description=desc, colour=clr)
-    else:
-        e = discord.Embed(title=title, description=desc, colour=clr).set_thumbnail(url=url)
+    e = discord.Embed(title=title, description=desc, colour=clr)
+    if not url is None:
+        e.set_thumbnail(url=url)
+    if not footer is None:
+        e.set_footer(text=footer)
     await client.send_message(message.channel, embed=e)
     try:
         await client.delete_message(InitMsg)
